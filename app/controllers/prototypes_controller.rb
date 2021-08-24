@@ -1,6 +1,9 @@
 class PrototypesController < ApplicationController
   before_action :set_user_variable
-  
+  before_action :authenticate_user! , only: [:new , :create , :edit , :update , :destroy]
+  before_action :move_to_index , only: [:edit] 
+    
+
   def index
     @prototype = Prototype.all
   end
@@ -44,6 +47,14 @@ class PrototypesController < ApplicationController
   end
 
   private
+
+  def move_to_index
+    @prototype = Prototype.find(params[:id])
+    if @prototype.user.id != current_user.id 
+      redirect_to action: :index
+    end
+  end
+
   def set_user_variable
     @user = User.new
   end
